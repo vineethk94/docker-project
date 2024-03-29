@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    environment {
+        PATH = "$PATH:/opt/apache-maven-3.6.3/bin"
+        
+    }
+    stages {
+        stage ("Checkout the SCM") {
+            steps {
+                git "https://github.com/mmbabu1988/docker-project123.git"
+            }
+        }
+        stage ("Compile the code") {
+            steps {
+                sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install '
+            }
+        }
+        stage ("sonarqube analysis") {
+            steps {
+                withSonarQubeEnv('sonarqube-4.0.0') {
+                   sh "mvn sonar:sonar"
+                    
+                }
+                
+            }
+        }
+    }
+    
+}
